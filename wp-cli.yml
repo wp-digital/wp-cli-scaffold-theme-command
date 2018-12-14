@@ -1,2 +1,2 @@
 require:
-  - command.php
+  - scaffold-theme-command.php
