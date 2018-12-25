@@ -76,7 +76,8 @@ To be able to authenticate to Github you need to add token with one of the follo
 define( 'GITHUB_PAT', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' );
 ~~~
 
-To generate token go to [Settings / Developer settings](https://github.com/settings/tokens) with next scopes:
+To generate token go to [Settings / Developer settings](https://github.com/settings/tokens). 
+Token should has at least next scopes:
 
 * `repo` - Full control of private repositories
 * `user`
