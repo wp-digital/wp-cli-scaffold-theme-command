@@ -1,49 +1,83 @@
 innocode-digital/wp-cli-scaffold-theme-command
 ==============================================
 
-
-
-[![Build Status](https://travis-ci.org/innocode-digital/wp-cli-scaffold-theme-command.svg?branch=master)](https://travis-ci.org/innocode-digital/wp-cli-scaffold-theme-command)
-
-Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing) | [Support](#support)
+Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing)
 
 ## Using
 
+This package implements the following command:
 
+### wp scaffold theme
+
+Generates starter code for a theme based on Innocode theme skeleton.
+
+    wp scaffold theme <slug> [--activate] [--enable-network] [--name=<title>] [--author=<full-name>] [--author_uri=<uri>] [--force]
+
+See the [WP Theme Skeleton](https://github.com/innocode-digital/wp-theme-skeleton) for more details.
+
+**OPTIONS**
+
+	<slug>
+		The slug for the new theme, used for prefixing functions.
+
+	[--activate]
+		Activate the newly downloaded theme.
+
+	[--enable-network]
+		Enable the newly downloaded theme for the entire network.
+
+	[--name=<title>]
+		What to put in the 'Theme Name:' header in 'style.css'. Default is <slug> with uppercase first letter.
+		
+    [--version=<version>]
+        What to put in the 'Version:' header in 'style.css' and in the 'version' property in 'composer.json' and 'package.json' files. Default is '1.0.0'.
+        
+    [--description=<text>]
+        What to put in the 'Description:' header in 'style.css' and in the 'description' property in 'composer.json' and 'package.json' files. Default is ''.
+
+	[--author=<full-name>]
+		What to put in the 'Author:' header in 'style.css'. Default is 'Innocode'.
+
+	[--author_uri=<uri>]
+		What to put in the 'Author URI:' header in 'style.css'. Default is 'https://innocode.com/'.
+
+    [--text_domain=<domain>]
+        What to put in the 'Text Domain:' header in 'style.css'. Default is <slug>.
+        
+    [--repo=<slug>]
+        What is a repo on Github for this project. Default is 'innocode-digital/<slug>'.
+
+	[--force]
+		Overwrite files that already exist.
 
 ## Installing
 
-Installing this package requires WP-CLI v1.1.0 or greater. Update to the latest stable release with `wp cli update`.
+Installing this package requires WP-CLI v2.0.0 or greater. Update to the latest stable release with `wp cli update`.
 
 Once you've done so, you can install this package with:
 
     wp package install git@github.com:innocode-digital/wp-cli-scaffold-theme-command.git
+    
+To be able to authenticate to Github you need to add token with one of the following methods:
 
-## Contributing
+* Add to your local `auth.json` OAuth token:
 
-We appreciate you taking the initiative to contribute to this project.
+~~~
+{
+    "github-oauth": {
+        "github.com": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+}
+~~~
+    
+* Define `GITHUB_PAT` constant in `wp-config.php`:
 
-Contributing isn’t limited to just code. We encourage you to contribute in the way that best fits your abilities, by writing tutorials, giving a demo at your local meetup, helping other users with their support questions, or revising our documentation.
+~~~
+define( 'GITHUB_PAT', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' );
+~~~
 
-For a more thorough introduction, [check out WP-CLI's guide to contributing](https://make.wordpress.org/cli/handbook/contributing/). This package follows those policy and guidelines.
+To generate token go to [Settings / Developer settings](https://github.com/settings/tokens) with next scopes:
 
-### Reporting a bug
-
-Think you’ve found a bug? We’d love for you to help us get it fixed.
-
-Before you create a new issue, you should [search existing issues](https://github.com/innocode-digital/wp-cli-scaffold-theme-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
-
-Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/innocode-digital/wp-cli-scaffold-theme-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.wordpress.org/cli/handbook/bug-reports/).
-
-### Creating a pull request
-
-Want to contribute a new feature? Please first [open a new issue](https://github.com/innocode-digital/wp-cli-scaffold-theme-command/issues/new) to discuss whether the feature is a good fit for the project.
-
-Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.wordpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.wordpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
-
-## Support
-
-Github issues aren't for general support questions, but there are other venues you can try: https://wp-cli.org/#support
-
-
-*This README.md is generated dynamically from the project's codebase using `wp scaffold package-readme` ([doc](https://github.com/wp-cli/scaffold-package-command#wp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*
+* `repo` - Full control of private repositories
+* `user`
+    * `read:user` - Read all user profile data

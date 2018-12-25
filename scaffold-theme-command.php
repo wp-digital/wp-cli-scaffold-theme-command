@@ -1,7 +1,16 @@
 <?php
 
-define( 'INNOCODE_SCAFFOLD_THEME', 'innocode_scaffold_theme' );
-define( 'INNOCODE_SCAFFOLD_THEME_VERSION', '0.0.1' );
+if ( ! defined( 'INNOCODE_SCAFFOLD_THEME' ) ) {
+    define( 'INNOCODE_SCAFFOLD_THEME', 'innocode_scaffold_theme' );
+}
+
+if ( ! defined( 'INNOCODE_SCAFFOLD_THEME_VERSION' ) ) {
+    define( 'INNOCODE_SCAFFOLD_THEME_VERSION', '1.0.0' );
+}
+
+if ( ! defined( 'INNOCODE_GITHUB_USERNAME' ) ) {
+    define( 'INNOCODE_GITHUB_USERNAME', 'innocode-digital' );
+}
 
 if ( ! class_exists( 'WP_CLI' ) ) {
 	return;
