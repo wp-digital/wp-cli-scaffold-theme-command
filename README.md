@@ -18,16 +18,16 @@ See the [WP Theme Skeleton](https://github.com/innocode-digital/wp-theme-skeleto
 **OPTIONS**
 
 	<slug>
-		The slug for the new theme.
+        The slug for the new theme.
 
 	[--activate]
-		Activate the newly downloaded theme.
+        Activate the newly downloaded theme.
 
 	[--enable-network]
-		Enable the newly downloaded theme for the entire network.
+        Enable the newly downloaded theme for the entire network.
 
 	[--name=<title>]
-		What to put in the 'Theme Name:' header in 'style.css'. Default is <slug> with uppercase first letter.
+        What to put in the 'Theme Name:' header in 'style.css'. Default is <slug> with uppercase first letter.
 		
     [--version=<version>]
         What to put in the 'Version:' header in 'style.css' and in the 'version' property in 'composer.json' and 'package.json' files. Default is '1.0.0'.
@@ -36,10 +36,10 @@ See the [WP Theme Skeleton](https://github.com/innocode-digital/wp-theme-skeleto
         What to put in the 'Description:' header in 'style.css' and in the 'description' property in 'composer.json' and 'package.json' files. Default is ''.
 
 	[--author=<full-name>]
-		What to put in the 'Author:' header in 'style.css'. Default is 'Innocode'.
+        What to put in the 'Author:' header in 'style.css'. Default is 'Innocode'.
 
 	[--author_uri=<uri>]
-		What to put in the 'Author URI:' header in 'style.css'. Default is 'https://innocode.com/'.
+        What to put in the 'Author URI:' header in 'style.css'. Default is 'https://innocode.com/'.
 
     [--text_domain=<domain>]
         What to put in the 'Text Domain:' header in 'style.css'. Default is <slug>.
@@ -48,7 +48,7 @@ See the [WP Theme Skeleton](https://github.com/innocode-digital/wp-theme-skeleto
         What is a repo on Github for this project. Default is 'innocode-digital/<slug>'.
 
 	[--force]
-		Overwrite files that already exist.
+        Overwrite files that already exist.
 
 ## Installing
 
