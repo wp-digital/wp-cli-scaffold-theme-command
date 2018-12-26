@@ -305,6 +305,8 @@ Requires at least: WordPress $wp_version." );
             file_put_contents( $functions_php_path, $functions_php );
         }
 
+        file_put_contents( "$theme_dir/.env", '' );
+
         foreach ( [
             "$theme_dir/composer.lock",
             "$theme_dir/package-lock.json",
