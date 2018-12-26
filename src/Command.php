@@ -221,11 +221,6 @@ class Command extends Scaffold_Command
                 $composer_json['repositories'] = [];
             }
 
-            $composer_json['repositories'][] = [
-                'type' => 'composer',
-                'url'  => 'https://packages.metabox.io/33c17f3f0a8f6ebbdd359f1901ba46d5', // @TODO: move key to env
-            ];
-
             if ( ! isset( $composer_json['authors'] ) ) {
                 $composer_json['authors'] = [];
             }
