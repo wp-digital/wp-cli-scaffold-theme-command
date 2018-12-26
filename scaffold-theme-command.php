@@ -5,7 +5,7 @@ if ( ! defined( 'INNOCODE_SCAFFOLD_THEME' ) ) {
 }
 
 if ( ! defined( 'INNOCODE_SCAFFOLD_THEME_VERSION' ) ) {
-    define( 'INNOCODE_SCAFFOLD_THEME_VERSION', '1.0.0' );
+    define( 'INNOCODE_SCAFFOLD_THEME_VERSION', '1.0.1' );
 }
 
 if ( ! defined( 'INNOCODE_GITHUB_USERNAME' ) ) {

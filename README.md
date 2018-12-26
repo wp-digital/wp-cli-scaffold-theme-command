@@ -60,7 +60,13 @@ Once you've done so, you can install this package with:
     
 To be able to authenticate to Github you need to add token with one of the following methods:
 
-* Add to your local `auth.json` OAuth token:
+* Add to your local `auth.json` OAuth token from the command line:
+
+~~~
+composer config -g github-oauth.github.com xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+~~~
+
+* Add to your local `auth.json` OAuth token manually in `$HOME/.composer/auth.json`:
 
 ~~~
 {
