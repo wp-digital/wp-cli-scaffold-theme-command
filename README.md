@@ -18,7 +18,7 @@ See the [WP Theme Skeleton](https://github.com/innocode-digital/wp-theme-skeleto
 **OPTIONS**
 
 	<slug>
-		The slug for the new theme, used for prefixing functions.
+		The slug for the new theme.
 
 	[--activate]
 		Activate the newly downloaded theme.
