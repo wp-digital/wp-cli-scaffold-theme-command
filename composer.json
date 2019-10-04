@@ -1,6 +1,6 @@
 {
     "name": "innocode-digital/wp-cli-scaffold-theme-command",
-    "version": "1.0.5",
+    "version": "1.1.0",
     "description": "Generates starter code for a theme based on Innocode theme skeleton.",
     "type": "wp-cli-package",
     "homepage": "https://github.com/innocode-digital/wp-cli-scaffold-theme-command",
@@ -14,13 +14,18 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
-        "psr-4": { "InnocodeScaffoldTheme\\": "src" },
-        "files": [ "scaffold-theme-command.php" ]
+        "psr-4": {
+            "Innocode\\ScaffoldTheme\\": "src/"
+        },
+        "files": [
+            "scaffold-theme-command.php"
+        ]
     },
     "require-dev": {
         "behat/behat": "~2.5"
     },
     "require": {
+        "ext-json": "*",
         "wp-cli/scaffold-command": "^2.0",
         "knplabs/github-api": "^2.10",
         "php-http/guzzle6-adapter": "^1.1",

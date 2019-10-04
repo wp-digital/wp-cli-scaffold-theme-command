@@ -1,21 +1,31 @@
 <?php
 
-if ( ! defined( 'INNOCODE_SCAFFOLD_THEME' ) ) {
-    define( 'INNOCODE_SCAFFOLD_THEME', 'innocode_scaffold_theme' );
-}
-
-if ( ! defined( 'INNOCODE_SCAFFOLD_THEME_VERSION' ) ) {
-    define( 'INNOCODE_SCAFFOLD_THEME_VERSION', '1.0.5' );
-}
-
-if ( ! defined( 'INNOCODE_GITHUB_USERNAME' ) ) {
-    define( 'INNOCODE_GITHUB_USERNAME', 'innocode-digital' );
-}
-
 if ( ! class_exists( 'WP_CLI' ) ) {
 	return;
 }
 
+if ( ! defined( 'INNOCODE_SCAFFOLD_THEME_SOURCE' ) ) {
+	define( 'INNOCODE_SCAFFOLD_THEME_SOURCE', 'github' );
+}
+
+if ( in_array( INNOCODE_SCAFFOLD_THEME_SOURCE, [
+	'github',
+] ) ) {
+	if ( ! defined( 'INNOCODE_SCAFFOLD_THEME_SOURCE_USERNAME' ) ) {
+		define( 'INNOCODE_SCAFFOLD_THEME_SOURCE_USERNAME', 'innocode-digital' );
+	}
+
+	if ( ! defined( 'INNOCODE_SCAFFOLD_THEME_SOURCE_REPOSITORY' ) ) {
+		define( 'INNOCODE_SCAFFOLD_THEME_SOURCE_REPOSITORY', 'wp-theme-skeleton' );
+	}
+} elseif ( ! defined( 'INNOCODE_SCAFFOLD_THEME_SOURCE_URL' ) ) {
+	trigger_error( 'Missing INNOCODE_SCAFFOLD_THEME_SOURCE_URL constant.', E_USER_ERROR );
+}
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-WP_CLI::add_command( 'scaffold theme', [ 'InnocodeScaffoldTheme\Command', 'theme' ] );
+try {
+	WP_CLI::add_command( 'scaffold theme', [ 'Innocode\ScaffoldTheme\Command', 'theme' ] );
+} catch ( Exception $exception ) {
+	trigger_error( $exception->getMessage(), E_USER_ERROR );
+}

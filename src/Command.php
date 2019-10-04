@@ -1,16 +1,19 @@
 <?php
 
-namespace InnocodeScaffoldTheme;
+namespace Innocode\ScaffoldTheme;
 
+use Innocode\ScaffoldTheme\Interfaces\VCSInterface;
+use Innocode\ScaffoldTheme\Sources\GithubSource;
+use Innocode\ScaffoldTheme\Sources\ZipSource;
 use WP_CLI;
 use Scaffold_Command;
-use Github;
 use Gettext;
+use GuzzleHttp;
 
 
 /**
  * Class Command
- * @package InnocodeScaffoldTheme
+ * @package Innocode\ScaffoldTheme
  */
 class Command extends Scaffold_Command
 {
@@ -64,7 +67,7 @@ class Command extends Scaffold_Command
      * @param array $assoc_args
      * @throws WP_CLI\ExitException
      */
-    public function theme( $args, $assoc_args )
+    public function theme( array $args, array $assoc_args )
     {
         global $wp_version;
 
@@ -94,8 +97,11 @@ class Command extends Scaffold_Command
             die;
         }
 
-        if ( strpos( $data['repo'], '/' ) === false ) {
-            $data['repo'] = INNOCODE_GITHUB_USERNAME . "/{$data['repo']}";
+        if (
+        	strpos( $data['repo'], '/' ) === false &&
+			defined( 'INNOCODE_SCAFFOLD_THEME_SOURCE_USERNAME' )
+		) {
+            $data['repo'] = INNOCODE_SCAFFOLD_THEME_SOURCE_USERNAME . "/{$data['repo']}";
         }
 
         $theme_uri = "https://github.com/{$data['repo']}";
@@ -109,45 +115,29 @@ class Command extends Scaffold_Command
             'wordpress-theme',
             'wp-theme',
             $theme_slug,
-            INNOCODE_GITHUB_USERNAME,
         ];
         $data['tags'] = implode( ', ', $keywords );
 
-        $gh_client = new Github\Client();
-        $gh_token = null;
+		switch ( INNOCODE_SCAFFOLD_THEME_SOURCE ) {
+			case 'github':
+				$source = new GithubSource();
+				break;
+			default:
+				$source = new ZipSource();
+				break;
+		}
 
-        if ( defined( 'GITHUB_PAT' ) ) {
-            $gh_token = GITHUB_PAT;
-        } else {
-            $composer_auth_json_path = static::_get_home_dir() . '/.composer/auth.json';
+		$archive = $source->get_archive();
 
-            if ( file_exists( $composer_auth_json_path ) ) {
-                $composer_auth_json = \GuzzleHttp\json_decode( file_get_contents( $composer_auth_json_path ), true );
-                $gh_token = $composer_auth_json['github-oauth']['github.com'];
-            }
-        }
-
-        if ( is_null( $gh_token ) ) {
-            WP_CLI::error( 'It\'s not possible to authenticate to Github since constant GITHUB_PAT is not defined and there is no OAuth token in .composer/auth.json.' );
-        }
-
-        try {
-            $gh_client->authenticate( $gh_token, Github\Client::AUTH_HTTP_TOKEN );
-        } catch ( \Exception $exception ) {
-            WP_CLI::error( $exception->getMessage() );
-        }
-
-        /**
-         * @var Github\Api\Repo $gh_api_repo
-         */
-        $gh_api_repo = $gh_client->api( 'repo' );
-        $archive = $gh_api_repo->contents()->archive( INNOCODE_GITHUB_USERNAME, 'wp-theme-skeleton', 'zipball', 'feature/version_2' );
+		if ( $source instanceof VCSInterface ) {
+			$packager = $source->create_packager();
+			$composer_package_author = $packager->get_composer_package_author();
+			$npm_package_contributor = $packager->get_npm_package_contributor();
+		}
 
         $tmpfname = wp_tempnam();
-
         $this->maybe_create_themes_dir();
         $this->init_wp_filesystem();
-
         file_put_contents( $tmpfname, $archive );
         $existing_dirs = is_dir( $theme_dir ) ? scandir( $theme_dir ) : [];
         $unzip_result = unzip_file( $tmpfname, $theme_dir );
@@ -168,44 +158,15 @@ class Command extends Scaffold_Command
 
             copy_dir( $theme_subdir, $theme_dir );
 
-            if ( ! $this->_delete_dir( $theme_subdir ) ) {
+            if ( ! Helpers::delete_dir( $theme_subdir ) ) {
                 WP_Cli::warning( "Could not fully remove the theme subdirectory '$theme_subdir'." );
-            }
-        }
-
-        $gh_user = $gh_client->currentUser()->show();
-
-        $composer_json_author = [];
-        $package_json_contributor = [];
-
-        if ( isset( $gh_user['name'] ) ) {
-            $name = trim( (string) $gh_user['name'] );
-
-            if ( $name ) {
-                $package_json_contributor['name'] = $composer_json_author['name'] = $name;
-            }
-        }
-
-        if ( isset( $gh_user['email'] ) ) {
-            $email = sanitize_email( (string) $gh_user['email'] );
-
-            if ( $email && is_email( $email ) ) {
-                $package_json_contributor['email'] = $composer_json_author['email'] = $email;
-            }
-        }
-
-        if ( isset( $gh_user['blog'] ) ) {
-            $homepage = trim( (string) $gh_user['blog'] );
-
-            if ( $homepage ) {
-                $package_json_contributor['url'] = $composer_json_author['homepage'] = esc_url( $homepage );
             }
         }
 
         $composer_json_path = "$theme_dir/composer.json";
 
         if ( file_exists( $composer_json_path ) ) {
-            $composer_json = \GuzzleHttp\json_decode( file_get_contents( $composer_json_path ), true );
+            $composer_json = GuzzleHttp\json_decode( file_get_contents( $composer_json_path ), true );
             $composer_json['name'] = $data['repo'];
             $composer_json['version'] = $data['version'];
             $composer_json['description'] = $data['description'];
@@ -225,20 +186,20 @@ class Command extends Scaffold_Command
                 $composer_json['authors'] = [];
             }
 
-            if ( ! empty( $composer_json_author ) && !static::_in_array_by_params( [
+            if ( ! empty( $composer_package_author ) && ! Helpers::in_array_by_params( [
                 'name',
                 'email',
-            ], $composer_json['authors'], $composer_json_author ) ) {
-                $composer_json['authors'][] = $composer_json_author;
+            ], $composer_json['authors'], $composer_package_author ) ) {
+                $composer_json['authors'][] = $composer_package_author;
             }
 
-            file_put_contents( $composer_json_path, \GuzzleHttp\json_encode( $composer_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+            file_put_contents( $composer_json_path, GuzzleHttp\json_encode( $composer_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
         }
 
         $package_json_path = "$theme_dir/package.json";
 
         if ( file_exists( $package_json_path ) ) {
-            $package_json = \GuzzleHttp\json_decode( file_get_contents( $package_json_path ), true );
+            $package_json = GuzzleHttp\json_decode( file_get_contents( $package_json_path ), true );
             $package_json['name'] = $theme_slug;
             $package_json['version'] = $data['version'];
             $package_json['description'] = $data['description'];
@@ -253,14 +214,14 @@ class Command extends Scaffold_Command
                 $package_json['contributors'] = [];
             }
 
-            if ( ! empty( $package_json_contributor ) && !static::_in_array_by_params( [
+            if ( ! empty( $npm_package_contributor ) && ! Helpers::in_array_by_params( [
                 'name',
                 'email',
-            ], $package_json['contributors'], $package_json_contributor ) ) {
-                $package_json['contributors'][] = $package_json_contributor;
+            ], $package_json['contributors'], $npm_package_contributor ) ) {
+                $package_json['contributors'][] = $npm_package_contributor;
             }
 
-            file_put_contents( $package_json_path, \GuzzleHttp\json_encode( $package_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+            file_put_contents( $package_json_path, GuzzleHttp\json_encode( $package_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
         }
 
         file_put_contents( "$theme_dir/style.css", "@charset \"UTF-8\";
@@ -281,7 +242,7 @@ Tags: {$data['tags']}
 
 Requires at least: WordPress $wp_version." );
 
-        $po_path = "$theme_dir/languages/nb_NO.po";
+        $po_path = "$theme_dir/languages/skeleton.pot";
 
         if ( file_exists( $po_path ) ) {
             $translations = Gettext\Translations::fromPoFile( $po_path );
@@ -322,59 +283,5 @@ Requires at least: WordPress $wp_version." );
                 WP_CLI::run_command( [ 'theme', 'enable', $theme_slug ], [ 'network' => true ] );
                 break;
         }
-    }
-
-    /**
-     * @param string $dir
-     * @return bool
-     */
-    protected static function _delete_dir( $dir )
-    {
-        global $wp_filesystem;
-
-        return $wp_filesystem->delete( $dir, true );
-    }
-
-    /**
-     * @param array $params
-     * @param array $arrays
-     * @param array $array
-     * @return bool
-     */
-    protected static function _in_array_by_params( array $params, array $arrays, array $array )
-    {
-        foreach ( $arrays as $existing_array ) {
-            foreach ( $params as $param ) {
-                if (
-                    isset( $existing_array[ $param ] ) && isset( $array[ $param ] )
-                    && $existing_array[ $param ] == $array[ $param ]
-                ) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Gets the environment's HOME directory if available.
-     *
-     * @return null|string
-     */
-    protected static function _get_home_dir()
-    {
-        // On Linux/Unix-like systems, use the HOME environment variable
-        $home_dir = getenv( 'HOME' );
-
-        if ( $home_dir ) {
-            return $home_dir;
-        }
-
-        // Get the HOMEDRIVE and HOMEPATH values for Windows hosts
-        $home_drive = getenv( 'HOMEDRIVE' );
-        $home_path = getenv( 'HOMEPATH' );
-
-        return ( $home_drive && $home_path ) ? $home_drive . $home_path : null;
     }
 }
