@@ -58,7 +58,10 @@ Once you've done so, you can install this package with:
 
     wp package install git@github.com:innocode-digital/wp-cli-scaffold-theme-command.git
     
-To be able to authenticate to Github you need to add token with one of the following methods:
+To be able to authenticate to Github, so it will be possible to retrieve your user data and insert 
+into `composer.json` as author as well as into `package.json` as contributor during scaffolding and 
+also in case when you want to use private skeleton repository, you need to add token with one of 
+the following methods:
 
 * Add to your local `auth.json` OAuth token from the command line:
 
