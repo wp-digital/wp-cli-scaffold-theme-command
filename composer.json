@@ -1,10 +1,10 @@
 {
     "name": "innocode-digital/wp-cli-scaffold-theme-command",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Generates starter code for a theme based on Innocode theme skeleton.",
     "type": "wp-cli-package",
     "homepage": "https://github.com/innocode-digital/wp-cli-scaffold-theme-command",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "Viktor Kuliebiakin",
@@ -22,11 +22,12 @@
         ]
     },
     "require-dev": {
+        "wp-cli/wp-cli": "*",
         "behat/behat": "~2.5"
     },
     "require": {
         "ext-json": "*",
-        "wp-cli/scaffold-command": "^2.0",
+        "wp-cli/scaffold-command": "*",
         "knplabs/github-api": "^2.10",
         "php-http/guzzle6-adapter": "^1.1",
         "gettext/gettext": "^4.6"

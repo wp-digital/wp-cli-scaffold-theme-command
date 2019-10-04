@@ -22,7 +22,9 @@ if ( in_array( INNOCODE_SCAFFOLD_THEME_SOURCE, [
 	trigger_error( 'Missing INNOCODE_SCAFFOLD_THEME_SOURCE_URL constant.', E_USER_ERROR );
 }
 
-require_once __DIR__ . '/vendor/autoload.php';
+if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor/autoload.php';
+}
 
 try {
 	WP_CLI::add_command( 'scaffold theme', [ 'Innocode\ScaffoldTheme\Command', 'theme' ] );
