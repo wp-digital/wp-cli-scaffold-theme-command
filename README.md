@@ -49,6 +49,24 @@ See the [WP Theme Skeleton](https://github.com/innocode-digital/wp-theme-skeleto
 
 	[--force]
         Overwrite files that already exist.
+        
+	[--skeleton_source=<source>]
+		What is a source of skeleton theme. Possible values are 'github' and 'zip'. Default is 'github'.
+    
+    [--source_username=<username>]
+    	What is a username on Github. Default is 'innocode-digital'.
+    
+    [--source_repo=<repo>]
+		What is a repository on Github. No need to use it when <skeleton_source> is 'zip'. Default is 'wp-theme-skeleton'.
+    
+    [--source_url=<url>]
+    	What is an URL of source. Applicable only when <skeleton_source> is 'zip'.
+    
+    [--skip-env]
+    	Don't generate .env file.
+    
+    [--skip-install-notice]
+    	Don't show notice about need to run installation commands.
 
 ## Installing
 

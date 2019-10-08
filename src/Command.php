@@ -2,13 +2,13 @@
 
 namespace Innocode\ScaffoldTheme;
 
+use Gettext;
+use GuzzleHttp;
 use Innocode\ScaffoldTheme\Interfaces\VCSInterface;
 use Innocode\ScaffoldTheme\Sources\GithubSource;
 use Innocode\ScaffoldTheme\Sources\ZipSource;
-use WP_CLI;
 use Scaffold_Command;
-use Gettext;
-use GuzzleHttp;
+use WP_CLI;
 
 
 /**
@@ -56,6 +56,24 @@ class Command extends Scaffold_Command
      *
      * [--force]
      * : Overwrite files that already exist.
+	 *
+	 * [--skeleton_source=<source>]
+	 * : What is a source of skeleton theme. Possible values are 'github' and 'zip'. Default is 'github'.
+	 *
+	 * [--source_username=<username>]
+	 * : What is a username on Github. Default is 'innocode-digital'.
+	 *
+	 * [--source_repo=<repo>]
+	 * : What is a repository on Github. No need to use it when <skeleton_source> is 'zip'. Default is 'wp-theme-skeleton'.
+	 *
+	 * [--source_url=<url>]
+	 * : What is an URL of source. Applicable only when <skeleton_source> is 'zip'.
+	 *
+	 * [--skip-env]
+	 * : Don't generate .env file.
+	 *
+	 * [--skip-install-notice]
+	 * : Don't show notice about need to run installation commands.
      *
      * ## EXAMPLES
      *
@@ -79,13 +97,17 @@ class Command extends Scaffold_Command
         }
 
         $data = wp_parse_args( $assoc_args, [
-            'name'        => ucfirst( $theme_slug ),
-            'version'     => '1.0.0',
-            'description' => '',
-            'author'      => 'Innocode',
-            'author_uri'  => 'https://innocode.com/',
-            'text_domain' => $theme_slug,
-            'repo'        => $theme_slug,
+			'name'            => ucfirst( $theme_slug ),
+			'version'         => '1.0.0',
+			'description'     => '',
+			'author'          => 'Innocode',
+			'author_uri'      => 'https://innocode.com/',
+			'text_domain'     => $theme_slug,
+			'repo'            => $theme_slug,
+			'skeleton_source' => 'github',
+			'source_username' => 'innocode-digital',
+			'source_repo'     => 'wp-theme-skeleton',
+			'source_url'      => '',
         ] );
 
         $theme_dir = "$theme_path/$theme_slug";
@@ -99,9 +121,9 @@ class Command extends Scaffold_Command
 
         if (
         	strpos( $data['repo'], '/' ) === false &&
-			defined( 'INNOCODE_SCAFFOLD_THEME_SOURCE_USERNAME' )
+			$data['source_username']
 		) {
-            $data['repo'] = INNOCODE_SCAFFOLD_THEME_SOURCE_USERNAME . "/{$data['repo']}";
+            $data['repo'] = "{$data['source_username']}/{$data['repo']}";
         }
 
         $theme_uri = "https://github.com/{$data['repo']}";
@@ -118,12 +140,16 @@ class Command extends Scaffold_Command
         ];
         $data['tags'] = implode( ', ', $keywords );
 
-		switch ( INNOCODE_SCAFFOLD_THEME_SOURCE ) {
+		switch ( $data['skeleton_source'] ) {
 			case 'github':
-				$source = new GithubSource();
+				$source = new GithubSource( $data['source_username'], $data['source_repo'] );
 				break;
 			default:
-				$source = new ZipSource();
+				if ( ! $data['source_url'] ) {
+					WP_CLI::error( 'Missing source URL.' );
+				}
+
+				$source = new ZipSource( $data['source_url'] );
 				break;
 		}
 
@@ -261,7 +287,11 @@ Requires at least: WordPress $wp_version." );
             file_put_contents( $functions_php_path, $functions_php );
         }
 
-        file_put_contents( "$theme_dir/.env", '' );
+		$skip_dotenv = WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-env' );
+
+        if ( ! $skip_dotenv ) {
+			file_put_contents( "$theme_dir/.env", '' );
+		}
 
         foreach ( [
             "$theme_dir/composer.lock",
@@ -273,7 +303,11 @@ Requires at least: WordPress $wp_version." );
         }
 
         WP_CLI::success( "Created theme '{$data['name']}'." );
-        WP_Cli::line( "Remember to run `composer install` and `npm install` in $theme_dir." );
+		$skip_install_notice = WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-install-notice' );
+
+		if ( ! $skip_install_notice ) {
+			WP_Cli::line( "Remember to run `composer install` and `npm install` in $theme_dir." );
+		}
 
         switch ( true ) {
             case WP_CLI\Utils\get_flag_value( $assoc_args, 'activate' ):

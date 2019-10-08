@@ -18,6 +18,14 @@ final class GithubSource implements VCSInterface, SourceInterface
 	/**
 	 * @var string
 	 */
+	private $_username;
+	/**
+	 * @var string
+	 */
+	private $_repo;
+	/**
+	 * @var string
+	 */
 	private $_token;
 	/**
 	 * @var Github\Client
@@ -34,10 +42,14 @@ final class GithubSource implements VCSInterface, SourceInterface
 
 	/**
 	 * GithubSource constructor.
+	 * @param string $username
+	 * @param string $repo
 	 * @throws WP_CLI\ExitException
 	 */
-	public function __construct()
+	public function __construct( string $username, string $repo )
 	{
+		$this->_username = $username;
+		$this->_repo = $repo;
 		$this->_client = new Github\Client();
 		$this->_init_token();
 
@@ -66,11 +78,7 @@ final class GithubSource implements VCSInterface, SourceInterface
 		$this->_archive = $this->get_client()
 			->repo()
 			->contents()
-			->archive(
-				INNOCODE_SCAFFOLD_THEME_SOURCE_USERNAME,
-				INNOCODE_SCAFFOLD_THEME_SOURCE_REPOSITORY,
-				'zipball'
-			);
+			->archive( $this->_username, $this->_repo, 'zipball' );
 
 		return $this->_archive;
 	}
