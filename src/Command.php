@@ -97,7 +97,7 @@ class Command extends Scaffold_Command
         }
 
         $data = wp_parse_args( $assoc_args, [
-			'name'            => ucfirst( $theme_slug ),
+			'name'            => ucwords( $theme_slug, '-_' ),
 			'version'         => '1.0.0',
 			'description'     => '',
 			'author'          => 'Innocode',
