@@ -11,15 +11,15 @@ class Packager
 	/**
 	 * @var string
 	 */
-	protected $_name;
+	protected $_name = '';
 	/**
 	 * @var string
 	 */
-	protected $_email;
+	protected $_email = '';
 	/**
 	 * @var string
 	 */
-	protected $_url;
+	protected $_url = '';
 
 	/**
 	 * @return string
