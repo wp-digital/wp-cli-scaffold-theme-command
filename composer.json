@@ -26,7 +26,7 @@
     },
     "require": {
         "ext-json": "*",
-        "wp-cli/wp-cli": "*",
+        "wp-cli/wp-cli": "^2",
         "wp-cli/scaffold-command": "*",
         "knplabs/github-api": "^2.10",
         "php-http/guzzle6-adapter": "^1.1",
