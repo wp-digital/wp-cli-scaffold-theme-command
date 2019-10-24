@@ -1,6 +1,6 @@
 {
     "name": "innocode-digital/wp-cli-scaffold-theme-command",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "description": "Generates starter code for a theme based on Innocode theme skeleton.",
     "type": "wp-cli-package",
     "homepage": "https://github.com/innocode-digital/wp-cli-scaffold-theme-command",
