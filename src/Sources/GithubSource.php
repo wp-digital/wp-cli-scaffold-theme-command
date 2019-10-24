@@ -130,10 +130,17 @@ final class GithubSource implements VCSInterface, SourceInterface
 
 		$composer_auth_json_path = Helpers::get_home_dir() . '/.composer/auth.json';
 
-		if ( file_exists( $composer_auth_json_path ) ) {
-			$composer_auth_json = \GuzzleHttp\json_decode( file_get_contents( $composer_auth_json_path ), true );
-			$this->_token = $composer_auth_json['github-oauth']['github.com'];
+		if ( ! file_exists( $composer_auth_json_path ) ) {
+			return;
 		}
+
+		$composer_auth_json = \GuzzleHttp\json_decode( file_get_contents( $composer_auth_json_path ), true );
+
+		if ( ! isset( $composer_auth_json['github-oauth']['github.com'] ) ) {
+			return;
+		}
+
+		$this->_token = $composer_auth_json['github-oauth']['github.com'];
 	}
 
 	/**
