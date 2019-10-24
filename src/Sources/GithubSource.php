@@ -5,7 +5,6 @@ namespace Innocode\ScaffoldTheme\Sources;
 use Innocode\ScaffoldTheme\Interfaces\SourceInterface;
 use Innocode\ScaffoldTheme\Interfaces\VCSInterface;
 use Innocode\ScaffoldTheme\Packager;
-use Innocode\ScaffoldTheme\Helpers;
 use Exception;
 use Github;
 use WP_CLI;
@@ -128,7 +127,7 @@ final class GithubSource implements VCSInterface, SourceInterface
 			return;
 		}
 
-		$composer_auth_json_path = Helpers::get_home_dir() . '/.composer/auth.json';
+		$composer_auth_json_path = WP_CLI\Utils\get_home_dir() . '/.composer/auth.json';
 
 		if ( ! file_exists( $composer_auth_json_path ) ) {
 			return;

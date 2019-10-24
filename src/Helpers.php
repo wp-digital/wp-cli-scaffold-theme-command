@@ -40,25 +40,4 @@ final class Helpers
 
 		return false;
 	}
-
-	/**
-	 * Gets the environment's HOME directory if available.
-	 *
-	 * @return null|string
-	 */
-	public static function get_home_dir()
-	{
-		// On Linux/Unix-like systems, use the HOME environment variable
-		$home_dir = getenv( 'HOME' );
-
-		if ( $home_dir ) {
-			return $home_dir;
-		}
-
-		// Get the HOMEDRIVE and HOMEPATH values for Windows hosts
-		$home_drive = getenv( 'HOMEDRIVE' );
-		$home_path = getenv( 'HOMEPATH' );
-
-		return ( $home_drive && $home_path ) ? $home_drive . $home_path : null;
-	}
 }
