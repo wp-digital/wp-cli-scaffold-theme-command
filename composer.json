@@ -22,7 +22,6 @@
         ]
     },
     "require-dev": {
-        "wp-cli/wp-cli": "*",
         "behat/behat": "~2.5"
     },
     "require": {
