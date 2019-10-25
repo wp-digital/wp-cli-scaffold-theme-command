@@ -30,6 +30,7 @@
         "wp-cli/scaffold-command": "*",
         "knplabs/github-api": "^2.10",
         "php-http/guzzle6-adapter": "^1.1",
-        "gettext/gettext": "^4.6"
+        "gettext/gettext": "^4.6",
+        "localheinz/json-printer": "^2.0"
     }
 }

@@ -7,6 +7,7 @@ use GuzzleHttp;
 use Innocode\ScaffoldTheme\Interfaces\VCSInterface;
 use Innocode\ScaffoldTheme\Sources\GithubSource;
 use Innocode\ScaffoldTheme\Sources\ZipSource;
+use Localheinz\Json\Printer\Printer;
 use Scaffold_Command;
 use WP_CLI;
 
@@ -189,6 +190,7 @@ class Command extends Scaffold_Command
             }
         }
 
+		$json_printer = new Printer();
         $composer_json_path = "$theme_dir/composer.json";
 
         if ( file_exists( $composer_json_path ) ) {
@@ -219,7 +221,16 @@ class Command extends Scaffold_Command
                 $composer_json['authors'][] = $composer_package_author;
             }
 
-            file_put_contents( $composer_json_path, GuzzleHttp\json_encode( $composer_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+            file_put_contents( $composer_json_path, $json_printer->print( $composer_json, '  ' ) );
+            $root_dir = dirname( ABSPATH );
+			$root_composer_json_path = "$root_dir/composer.json";
+
+			if ( isset( $composer_json['autoload'] ) && file_exists( $root_composer_json_path ) ) {
+				$root_composer_json = GuzzleHttp\json_decode( file_get_contents( $root_composer_json_path ), true );
+				$relative_theme_dir = str_replace( WP_CLI\Utils\trailingslashit( $root_dir ), '', $theme_dir );
+				Helpers::copy_composer_autoload( $composer_json, $relative_theme_dir, $root_composer_json );
+				file_put_contents( $root_composer_json_path, $json_printer->print( $root_composer_json, '  ' ) );
+			}
         }
 
         $package_json_path = "$theme_dir/package.json";
@@ -247,7 +258,7 @@ class Command extends Scaffold_Command
                 $package_json['contributors'][] = $npm_package_contributor;
             }
 
-            file_put_contents( $package_json_path, GuzzleHttp\json_encode( $package_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+            file_put_contents( $package_json_path, $json_printer->print( $package_json, '  ' ) );
         }
 
         file_put_contents( "$theme_dir/style.css", "@charset \"UTF-8\";
@@ -271,7 +282,7 @@ Requires at least: WordPress $wp_version." );
         $po_path = "$theme_dir/languages/skeleton.pot";
 
         if ( file_exists( $po_path ) ) {
-            $translations = Gettext\Translations::fromPoFile( $po_path );
+			$translations = Gettext\Translations::fromPoFile( $po_path );
             $translations->setHeader( 'Project-Id-Version', "$theme_slug {$data['version']}" );
             $translations->setHeader( 'Report-Msgid-Bugs-To', $theme_issues );
             $translations->setHeader( 'POT-Creation-Date', date( 'c' ) );
