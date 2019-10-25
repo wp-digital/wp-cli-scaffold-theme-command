@@ -46,7 +46,7 @@ final class Helpers
 	 * @param string $path
 	 * @param array  $destination
 	 */
-	public static function copy_composer_autoload( array $source, $path, array $destination )
+	public static function copy_composer_autoload( array $source, $path, array &$destination )
 	{
 		if ( ! isset( $destination['autoload'] ) ) {
 			$destination['autoload'] = [];
@@ -63,7 +63,7 @@ final class Helpers
 	 * @param string $path
 	 * @param array  $destination
 	 */
-	public static function move_composer_autoload_paths( $standard, array $rules, $path, array $destination )
+	public static function move_composer_autoload_paths( $standard, array $rules, $path, array &$destination )
 	{
 		if ( ! isset( $destination[ $standard ] ) ) {
 			$destination[ $standard ] = [];

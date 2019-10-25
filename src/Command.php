@@ -238,6 +238,7 @@ class Command extends Scaffold_Command
 					JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
 				);
 				file_put_contents( $root_composer_json_path, $json_printer->print( $root_composer_json_str, '  ' ) );
+				WP_Cli::line( "Remember to run `composer dump-autoload` in $root_dir." );
 			}
         }
 
