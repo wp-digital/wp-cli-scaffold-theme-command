@@ -74,7 +74,7 @@ Installing this package requires WP-CLI v2.0.0 or greater. Update to the latest 
 
 Once you've done so, you can install this package with:
 
-    wp package install git@github.com:innocode-digital/wp-cli-scaffold-theme-command.git
+    wp package install innocode-digital/wp-cli-scaffold-theme-command
     
 To be able to authenticate to Github, so it will be possible to retrieve your user data and insert 
 into `composer.json` as author as well as into `package.json` as contributor during scaffolding and 
