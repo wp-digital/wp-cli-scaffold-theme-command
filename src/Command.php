@@ -221,7 +221,8 @@ class Command extends Scaffold_Command
                 $composer_json['authors'][] = $composer_package_author;
             }
 
-            file_put_contents( $composer_json_path, $json_printer->print( $composer_json, '  ' ) );
+			$composer_json_str = GuzzleHttp\json_encode( $composer_json );
+            file_put_contents( $composer_json_path, $json_printer->print( $composer_json_str, '  ' ) );
             $root_dir = dirname( ABSPATH );
 			$root_composer_json_path = "$root_dir/composer.json";
 
@@ -229,7 +230,8 @@ class Command extends Scaffold_Command
 				$root_composer_json = GuzzleHttp\json_decode( file_get_contents( $root_composer_json_path ), true );
 				$relative_theme_dir = str_replace( WP_CLI\Utils\trailingslashit( $root_dir ), '', $theme_dir );
 				Helpers::copy_composer_autoload( $composer_json, $relative_theme_dir, $root_composer_json );
-				file_put_contents( $root_composer_json_path, $json_printer->print( $root_composer_json, '  ' ) );
+				$root_composer_json_str = GuzzleHttp\json_encode( $root_composer_json );
+				file_put_contents( $root_composer_json_path, $json_printer->print( $root_composer_json_str, '  ' ) );
 			}
         }
 
@@ -258,7 +260,8 @@ class Command extends Scaffold_Command
                 $package_json['contributors'][] = $npm_package_contributor;
             }
 
-            file_put_contents( $package_json_path, $json_printer->print( $package_json, '  ' ) );
+			$package_json_str = GuzzleHttp\json_encode( $package_json );
+            file_put_contents( $package_json_path, $json_printer->print( $package_json_str, '  ' ) );
         }
 
         file_put_contents( "$theme_dir/style.css", "@charset \"UTF-8\";
